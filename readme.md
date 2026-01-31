@@ -21,7 +21,7 @@
 3. Start the app:
    npm run dev
 
-4. Open your browser and go to the link shown (usually http://localhost:5173)
+4. Open your browser and go to the link shown
 
 ### Features
 - Swap between different tokens
