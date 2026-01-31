@@ -1,2 +1,0 @@
-# OrgScale
-Take Home Test
