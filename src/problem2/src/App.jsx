@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react'
 import { 
   Card, 
   InputNumber, 
@@ -7,16 +7,16 @@ import {
   Typography, 
   Form,
   message,
-} from 'antd';
-import { SwapOutlined, SettingOutlined } from '@ant-design/icons';
-import { PRICE_DATA, formatNumber, formatUSD, getBalance } from './tokens';
+} from 'antd'
+import { SwapOutlined, SettingOutlined } from '@ant-design/icons'
+import { PRICE_DATA, formatNumber, formatUSD, getBalance } from './tokens'
 
-const { Title, Text } = Typography;
+const { Title, Text } = Typography
 
 function App() {
-  const [swapFlag, setSwapFlag] = useState(false);
-  const [form] = Form.useForm();
-  const [fromAmountValue, setFromAmountValue] = useState(null);
+  const [swapFlag, setSwapFlag] = useState(false)
+  const [form] = Form.useForm()
+  const [fromAmountValue, setFromAmountValue] = useState(null)
   // Create token options
   const tokenOptions = useMemo(() => 
     PRICE_DATA.map(token => {
@@ -27,9 +27,9 @@ function App() {
             alt={token.currency}
             className="w-6 h-6 rounded-full"
             onError={(e) => { 
-              e.target.onerror = null; 
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
+              e.target.onerror = null
+              e.target.style.display = 'none'
+              e.target.nextSibling.style.display = 'flex'
             }}
           />
           <div className="w-6 h-6 rounded-full bg-gray-600 items-center justify-center text-xs hidden">
@@ -37,45 +37,45 @@ function App() {
           </div>
           <span>{token.currency}</span>
         </div>
-      );
+      )
       return {
         value: token.currency,
         label,
         key: token.currency,
-      };
+      }
     }),
     []
-  );
-  const [fromToken, setFromToken] = useState(() => tokenOptions.find(opt => opt.value === 'ETH'));
-  const [toToken, setToToken] = useState(() => tokenOptions.find(opt => opt.value === 'USDC'));
-  const [toAmount, setToAmount] = useState(null);
-  const [loading, setLoading] = useState(false);
+  )
+  const [fromToken, setFromToken] = useState(() => tokenOptions.find(opt => opt.value === 'ETH'))
+  const [toToken, setToToken] = useState(() => tokenOptions.find(opt => opt.value === 'USDC'))
+  const [toAmount, setToAmount] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   // Watch form values
-  const fromAmount = Form.useWatch('fromAmount', form);
+  const fromAmount = Form.useWatch('fromAmount', form)
 
   // Keep fromAmountValue in sync with form
   useEffect(() => {
-    setFromAmountValue(fromAmount);
-  }, [fromAmount]);
+    setFromAmountValue(fromAmount)
+  }, [fromAmount])
 
   // Get token price
   const getPrice = (currency) => {
-    const val = typeof currency === 'object' && currency !== null ? currency.value : currency;
-    return PRICE_DATA.find(t => t.currency === val)?.price || 0;
-  };
+    const val = typeof currency === 'object' && currency !== null ? currency.value : currency
+    return PRICE_DATA.find(t => t.currency === val)?.price || 0
+  }
 
   // Calculate exchange rate
   const exchangeRate = useMemo(() => {
-    const fromPrice = getPrice(fromToken.value);
-    const toPrice = getPrice(toToken.value);
-    if (!fromPrice || !toPrice) return 0;
-    return fromPrice / toPrice;
-  }, [fromToken.value, toToken.value]);
+    const fromPrice = getPrice(fromToken.value)
+    const toPrice = getPrice(toToken.value)
+    if (!fromPrice || !toPrice) return 0
+    return fromPrice / toPrice
+  }, [fromToken.value, toToken.value])
 
   // Get balances
-  const fromBalance = getBalance(fromToken.value);
-  const toBalance = getBalance(toToken.value);
+  const fromBalance = getBalance(fromToken.value)
+  const toBalance = getBalance(toToken.value)
 
   // Update toAmount when fromAmount changes
   useEffect(() => {
@@ -86,87 +86,87 @@ function App() {
             fromToken: fromToken.value,
             toAmount: swapFlag * (getPrice(fromToken.value) / getPrice(toToken.value)),
             toToken: toToken.value
-          });
+          })
         }
     if (fromAmount && exchangeRate) {
-      setToAmount(fromAmount * exchangeRate);
+      setToAmount(fromAmount * exchangeRate)
     } else {
-      setToAmount(null);
+      setToAmount(null)
     }
-  }, [fromAmount, exchangeRate]);
+  }, [fromAmount, exchangeRate])  
 
   // MAX button click handler
   const handleMaxClick = () => {
-    form.setFieldsValue({ fromAmount: fromBalance });
-    form.validateFields(['fromAmount']);
-  };
+    form.setFieldsValue({ fromAmount: fromBalance })
+    form.validateFields(['fromAmount'])
+  }
 
   // Swap tokens
   const handleSwapTokens = () => {
     // Save current toAmount
-    const prevToAmount = toAmount;
+    const prevToAmount = toAmount
     console.log('Swapping:', {
       fromAmount: form.getFieldValue('fromAmount'),
       fromToken: fromToken.value,
       toAmount: toAmount,
       toToken: toToken.value
-    });
-    setFromToken(toToken);
-    setToToken(fromToken);
-    setSwapFlag(prevToAmount);
-  };
+    })
+    setFromToken(toToken)
+    setToToken(fromToken)
+    setSwapFlag(prevToAmount)
+  }
 
   // After swapping directions, set the new fromAmount to the previous toAmount
   useEffect(() => {
     if (swapFlag !== false) {
       if (typeof swapFlag === 'number' && !isNaN(swapFlag)) {
         // Set the form value and state
-        form.setFieldsValue({ fromAmount: swapFlag });
-        setFromAmountValue(swapFlag);
+        form.setFieldsValue({ fromAmount: swapFlag })
+        setFromAmountValue(swapFlag)
         // Immediately recalculate toAmount using the new exchange rate and the new fromAmount
-        const newExchangeRate = getPrice(fromToken.value) / getPrice(toToken.value);
-        const newToAmount = swapFlag * newExchangeRate;
-        setToAmount(newToAmount);
+        const newExchangeRate = getPrice(fromToken.value) / getPrice(toToken.value)
+        const newToAmount = swapFlag * newExchangeRate
+        setToAmount(newToAmount)
       } else {
-        form.setFieldsValue({ fromAmount: null });
-        setFromAmountValue(null);
-        setToAmount(null);
+        form.setFieldsValue({ fromAmount: null })
+        setFromAmountValue(null)
+        setToAmount(null)
       }
-      setSwapFlag(false);
+      setSwapFlag(false)
     }
-  }, [fromToken, toToken]);
+  }, [fromToken, toToken])
 
   // Handle form submit
   const handleSubmit = async (values) => {
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    message.success(`Successfully swapped ${formatNumber(values.fromAmount)} ${fromToken.value} for ${formatNumber(toAmount)} ${toToken.value}`);
-    form.resetFields();
-    setToAmount(null);
-    setLoading(false);
-  };
+    setLoading(true)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    message.success(`Successfully swapped ${formatNumber(values.fromAmount)} ${fromToken.value} for ${formatNumber(toAmount)} ${toToken.value}`)
+    form.resetFields()
+    setToAmount(null)
+    setLoading(false)
+  }
 
   // USD values
-  const fromUSD = fromAmount ? fromAmount * getPrice(fromToken.value) : 0;
-  const toUSD = toAmount ? toAmount * getPrice(toToken.value) : 0;
-  const feeUSD = fromUSD * 0.02;
+  const fromUSD = fromAmount ? fromAmount * getPrice(fromToken.value) : 0
+  const toUSD = toAmount ? toAmount * getPrice(toToken.value) : 0
+  const feeUSD = fromUSD * 0.02
 
   // Custom validation
   const validateFromAmount = (_, value) => {
     if (value === null || value === undefined || value === '') {
-      return Promise.reject(new Error('This field is required'));
+      return Promise.reject(new Error('This field is required'))
     }
     if (value <= 0) {
-      return Promise.reject(new Error('Amount must be greater than 0'));
+      return Promise.reject(new Error('Amount must be greater than 0'))
     }
     if (value > fromBalance) {
-      return Promise.reject(new Error('Insufficient balance'));
+      return Promise.reject(new Error('Insufficient balance'))
     }
     if (fromToken.value === toToken.value) {
-      return Promise.reject(new Error('Please select different tokens'));
+      return Promise.reject(new Error('Please select different tokens'))
     }
-    return Promise.resolve();
-  };
+    return Promise.resolve()
+  }
 
   return (
     <div className="w-full max-w-md">
@@ -233,22 +233,10 @@ function App() {
                       min={0}
                       value={fromAmountValue}
                       onChange={val => {
-                        setFromAmountValue(val);
-                        form.setFieldsValue({ fromAmount: val });
+                        setFromAmountValue(val)
+                        form.setFieldsValue({ fromAmount: val })
                       }}
                     />
-                    <button
-                      type="button"
-                      aria-label="Clear"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none"
-                      onClick={() => {
-                        form.setFieldsValue({ fromAmount: null });
-                        setToAmount(null);
-                      }}
-                      style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
-                    >
-                      &#10005;
-                    </button>
                   </div>
                 </Form.Item>
                 
@@ -354,7 +342,7 @@ function App() {
         </Card>
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

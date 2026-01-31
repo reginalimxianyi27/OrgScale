@@ -1,4 +1,4 @@
-// Token price data from the API
+// Token price data
 export const PRICE_DATA = [
   { currency: "BLUR", price: 0.20811525423728813 },
   { currency: "bNEO", price: 7.1282679 },
@@ -32,7 +32,7 @@ export const PRICE_DATA = [
   { currency: "wstETH", price: 1872.2579742372882 },
   { currency: "YieldUSD", price: 1.0290847966101695 },
   { currency: "ZIL", price: 0.01651813559322034 },
-];
+]
 
 // Dummy balances for tokens
 export const MOCK_BALANCES = {
@@ -68,22 +68,22 @@ export const MOCK_BALANCES = {
   wstETH: 1.8,
   YieldUSD: 2200,
   ZIL: 85000,
-};
+}
 
 // Token balance
 export const getBalance = (currency) => {
-  return MOCK_BALANCES[currency] || 0;
-};
+  return MOCK_BALANCES[currency] || 0
+}
 
 // Format number to display
 export const formatNumber = (num) => {
-  if (!num) return '0';
-  if (Math.abs(num) < 1) return Number(num).toFixed(6);
-  if (Math.abs(num) < 1000) return Number(num).toFixed(4);
-  return Number(num).toLocaleString('en-US', { maximumFractionDigits: 4 });
-};
+  if (!num) return '0'
+  if (Math.abs(num) < 1) return Number(num).toFixed(6)
+  if (Math.abs(num) < 1000) return Number(num).toFixed(4)
+  return Number(num).toLocaleString('en-US', { maximumFractionDigits: 4 })
+}
 
 export const formatUSD = (value) => {
-  if (!value) return '$0.00';
-  return `$${Number(value).toFixed(2)}`;
-};
+  if (!value) return '$0.00'
+  return `$${Number(value).toFixed(2)}`
+}
