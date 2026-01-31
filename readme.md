@@ -28,7 +28,6 @@
 - See token balances (mock data was created for each token)
 - See USD values
 - Click MAX to use full balance
-- Click X to clear input
 - Validations (throws error for insufficient balance, input < 0, required fields not filled, same tokens selected)
 
 ## Problem 3
